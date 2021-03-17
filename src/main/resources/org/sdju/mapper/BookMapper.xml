@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sdju.mapper.BookMapper">
+
+    <resultMap id="BookMap" type="org.sdju.model.Book">
+        <id property="id" column="id"></id>
+        <result property="name" column="book_name"></result>
+        <result property="author" column="author"></result>
+    </resultMap>
+
+    <select id="getAllBooks" resultMap="BookMap">
+        select * from t_book;
+    </select>
+
+    <select id="getBooksByPage" resultMap="BookMap">
+        select * from t_book
+        <if test="start != null and size != null">
+            limit #{start},#{size}
+        </if>
+    </select>
+
+    <select id="getBookByNameOrAuthor" resultMap="BookMap" parameterType="org.sdju.model.Book">
+        select * from t_book
+        where 1=1
+        <choose>
+            <when test="name != null and name != ''">
+                and book_name = #{name}
+            </when>
+            <when test="author != null and author != ''">
+                and author = #{author}
+            </when>
+            <otherwise>
+
+            </otherwise>
+        </choose>
+    </select>
+
+    <update id="updateBook" parameterType="org.sdju.model.Book">
+        update t_book
+        <set>
+            <if test="name!=null and name!=''">
+                book_name = #{name},
+            </if>
+            <if test="author!=null and author!=''">
+                author = #{author}
+            </if>
+        </set>
+
+        where id = #{id}
+    </update>
+
+    <select id="getBooksByIds" resultMap="BookMap">
+        select * from t_book where id in
+        <foreach collection="ids" open="(" close=")" item="id" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <insert id="batchAddBook">
+        insert into t_book (book_name,author) values
+        <foreach collection="books" separator="," item="book">
+            (#{book.name},#{book.author})
+        </foreach>
+    </insert>
+
+    <update id="updateBook2">
+        update t_book
+        <set>
+            <foreach collection="map" index="key" item="value" separator=",">
+                ${key} = #{value}
+            </foreach>
+        </set>
+        where id = #{id};
+    </update>
+
+    <select id="getBooksByAuthorFirstName" resultMap="BookMap">
+        <bind name="authorLike" value="author + '%' "/>
+            select * from t_book where author like #{authorLike};
+    </select>
+
+</mapper>

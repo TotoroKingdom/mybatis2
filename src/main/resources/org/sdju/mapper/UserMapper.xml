@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sdju.mapper.UserMapper">
+
+    <select id="getAllUsers" resultType="org.sdju.model.User">
+        select * from user;
+    </select>
+
+    <select id="getAllUsers2" resultType="java.util.HashMap">
+        select * from user;
+    </select>
+
+    <select id="getUserById" resultType="org.sdju.model.User">
+        select * from user where id = #{id};
+    </select>
+
+    <select id="getUserOrderBy" resultType="org.sdju.model.User" parameterType="java.lang.String">
+        select * from user order by ${orderby} desc ;
+    </select>
+
+    <select id="getUserNameContains" resultType="org.sdju.model.User" parameterType="java.lang.String">
+        select * from user where username like '%${username}%';
+    </select>
+
+    <update id="updateUsernameById">
+        update user set username=#{username} where id = #{id};
+    </update>
+
+    <insert id="addUser" parameterType="org.sdju.model.User" useGeneratedKeys="true" keyProperty="id">
+        insert into user (username,address) values (#{username},#{address});
+    </insert>
+
+    <insert id="addUser2" parameterType="java.util.HashMap">
+        insert into user (id,username,address) values (#{id},#{username},#{address});
+    </insert>
+
+</mapper>
